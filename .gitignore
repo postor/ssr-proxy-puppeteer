@@ -1,0 +1,4 @@
+/node_modules
+/yarn.lock
+/puppeteer.config.json
+/yarn-error.log
