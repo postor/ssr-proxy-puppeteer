@@ -3,7 +3,7 @@ const fs = require('fs-extra'),
   path = require('path'),
   argv = require('yargs').argv
 
-const configPath = argv.config || path.join(__dirname, '..', 'config.js')
+let configPath = argv.config || path.join(__dirname, '..', 'config.js')
 if (!path.isAbsolute(configPath)) {
   configPath = path.join(process.cwd(), configPath)
 }

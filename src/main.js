@@ -15,43 +15,83 @@ module.exports = async (config) => {
 
   const browser = await puppeteer.launch(config.puppeteer)
 
-  proxy.on('proxyRes', async function (proxyRes, req, res) {
-    const newHeader = { ...proxyRes.headers }
-    delete newHeader['content-encoding']
-    res.writeHead(proxyRes.statusCode, newHeader)
+  const bodyModifier = ssrConfig.bodyModifier || function (body, origin) {
+    return body.split(`${origin}/`).join('/')
+  }
+  const bodyNeedModify = ssrConfig.bodyNeedModify || function (origin, req, res, proxyRes) {
+    return Object.keys(proxyRes.headers).some(x => proxyRes.headers[x].includes('application/json'))
+  }
 
-    const bodyModifier = ssrConfig.bodyModifier || function (body, origin) {
-      return body.split(`${origin}/`).join('/')
+  /**
+   * need ssr
+   * @param {*} headers 
+   * @returns {number} -1=no 0=not sure 1=need
+   */
+  const needSSR = (headers) => {
+    if (headers['content-type']) {
+      if (headers['content-type'].includes('text/html')) {
+        return 1
+      }
+      return -1
     }
+    return 0
+  }
 
-    if (!isHtml(req.url, ssrConfig.extensions) || req.method !== 'GET') {
-      res.writeHead(proxyRes.statusCode, proxyRes.headers)
+  const newHeaders = (headers) => {
+    const newHeader = { ...headers }
+    delete newHeader['content-encoding']
+    delete newHeader['content-length']
+    return newHeader
+  }
+
+  proxy.on('proxyRes', async function (proxyRes, req, res) {
+    const needssrResult = needSSR(proxyRes.headers)
+    //console.log({needssrResult})
+    if (
+      req.method !== 'GET'
+      || needssrResult === -1
+      || (needssrResult === 0 && !isHtml(req.url, ssrConfig.extensions))
+    ) {
+      if (bodyNeedModify(ssrConfig.origin, req, res, proxyRes)) {
+        console.log(`modify body ${req.url}`)
+        res.writeHead(proxyRes.statusCode, newHeaders(proxyRes.headers))
+        let body = new Buffer('')
+        proxyRes.on('data', function (data) {
+          body = Buffer.concat([body, data])
+        })
+        proxyRes.on('end', function () {
+          body = body.toString()
+          body = bodyModifier(body, ssrConfig.origin, req, res, proxyRes)
+          //console.log(body.substring(0, 10))
+          res.write(body)
+          res.end()
+        })
+        return
+      }
+
       console.log(`pipe ${req.url}`)
-      let body = new Buffer('')
-      proxyRes.on('data', function (data) {
-        body = Buffer.concat([body, data])
-      })
-      proxyRes.on('end', function () {
-        body = body.toString()
-        res.end(bodyModifier(body, ssrConfig.origin, req, res, proxyRes))
-      })
+      res.writeHead(proxyRes.statusCode, proxyRes.headers)
+      proxyRes.pipe(res)
       return
     }
-
+    res.writeHead(proxyRes.statusCode, newHeaders(proxyRes.headers))
     const cachedHtml = await cacheStore.get(req.url)
     if (cachedHtml) {
       console.log(`write cached ${req.url}`)
-      res.end(bodyModifier(cachedHtml, ssrConfig.origin, req, res, proxyRes))
+      res.write(bodyModifier(cachedHtml, ssrConfig.origin, req, res, proxyRes))
+      res.end()
       return
     }
 
     const ssr = require('./ssr')
     const urlConfig = calcUrlConfig(ssrConfig, req.url)
-    console.log({ url: target + req.url })
-    const html = await ssr(browser, target + req.url, urlConfig)
+    //console.log({ url: target + req.url })
+    let html = await ssr(browser, target + req.url, urlConfig)
 
     console.log(`write ssr ${req.url}`)
-    res.write(bodyModifier(html, ssrConfig.origin, req, res, proxyRes))
+    html = bodyModifier(html, ssrConfig.origin, req, res, proxyRes)
+    //console.log({ html }, proxyRes.headers)
+    res.write(html)
     res.end()
 
     const { cache = true } = urlConfig

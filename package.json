@@ -7,6 +7,9 @@
     "start": "node src/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "bin": {
+    "ssr-proxy-puppeteer": "src/server.js"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/postor/ssr-proxy-puppeteer.git"
