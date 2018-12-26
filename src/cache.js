@@ -9,7 +9,6 @@ module.exports = (config = {
     store,
     ...rest
   } = config
-
   if (store === 'memory') {
     return cacheManager.caching(config)
   }

@@ -1,67 +1,57 @@
-#!/usr/bin/env node
-
 const http = require('http'),
-  fs = require('fs-extra'),
-  path = require('path'),
   httpProxy = require('http-proxy'),
   puppeteer = require('puppeteer'),
-  argv = require('yargs').argv
+  argv = require('yargs').argv,
+  calcUrlConfig = require('./url-config'),
+  isHtml = require('./is-html')
 
-const configPath = argv.config || path.join(__dirname, 'config.json')
-let config = fs.existsSync(configPath)
-  ? fs.readJSONSync(configPath)
-  : {}
+module.exports = async (config) => {
+  let ssrConfig = config.ssr || {}
+  const target = ssrConfig.origin
+  const cacheStore = require('./cache')(config.cache)
+  const proxy = httpProxy.createProxyServer({
+    target,
+  })
 
-const cacheStore = require('./cache')(config.cache)
-
-let ssrConfig = config.ssr || {}
-
-if (!(argv.origin || ssrConfig.origin)) {
-  throw 'origin is need eigther in command param or config file'
-}
-const target = (argv.origin || ssrConfig.origin)
-const proxy = httpProxy.createProxyServer({
-  target,
-});
-
-(async () => {
   const browser = await puppeteer.launch(config.puppeteer)
 
   proxy.on('proxyRes', async function (proxyRes, req, res) {
-    const isHtml = Object.keys(proxyRes.headers).some(
-      key => (key === 'force-ssr') || (key === 'content-type' && proxyRes.headers[key].includes('text/html'))
-    )
-
-
     const newHeader = { ...proxyRes.headers }
     delete newHeader['content-encoding']
     res.writeHead(proxyRes.statusCode, newHeader)
 
+    const bodyModifier = ssrConfig.bodyModifier || function (body, origin) {
+      return body.split(`${origin}/`).join('/')
+    }
 
-    if (!isHtml || req.method !== 'GET') {
+    if (!isHtml(req.url, ssrConfig.extensions) || req.method !== 'GET') {
       res.writeHead(proxyRes.statusCode, proxyRes.headers)
       console.log(`pipe ${req.url}`)
-      proxyRes.pipe(res)
+      let body = new Buffer('')
+      proxyRes.on('data', function (data) {
+        body = Buffer.concat([body, data])
+      })
+      proxyRes.on('end', function () {
+        body = body.toString()
+        res.end(bodyModifier(body, ssrConfig.origin, req, res, proxyRes))
+      })
       return
     }
 
     const cachedHtml = await cacheStore.get(req.url)
     if (cachedHtml) {
       console.log(`write cached ${req.url}`)
-      res.write(cachedHtml)
-      res.end()
+      res.end(bodyModifier(cachedHtml, ssrConfig.origin, req, res, proxyRes))
       return
     }
 
     const ssr = require('./ssr')
-    const urlConfig = {
-      ...ssrConfig,
-      ...((ssrConfig.urls && ssrConfig.urls[req.url]) ? ssrConfig.urls[req.url] : {}),
-    }
+    const urlConfig = calcUrlConfig(ssrConfig, req.url)
+    console.log({ url: target + req.url })
     const html = await ssr(browser, target + req.url, urlConfig)
 
     console.log(`write ssr ${req.url}`)
-    res.write(html)
+    res.write(bodyModifier(html, ssrConfig.origin, req, res, proxyRes))
     res.end()
 
     const { cache = true } = urlConfig
@@ -78,9 +68,9 @@ const proxy = httpProxy.createProxyServer({
       selfHandleResponse: true
     })
   })
-  const port = argv.port || 3000
+  const port = argv.port || ssrConfig.port || 3000
   server.listen(port, e => e ? console.log(e) : console.log(`listening on port ${port}`))
-})()
+}
 
 
 

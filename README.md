@@ -1,6 +1,6 @@
 # ssr-proxy-puppeteer
 
-Make SEO easy for all SPA, enable ssr for all SPA
+Make SEO easy for legacy SPA
 
 ## usage
 
@@ -10,6 +10,12 @@ response with `Content-Type` contain `text/html` will get rendered, others just 
 npm i ssr-proxy-puppeteer -g
 
 ssr-proxy-puppeteer
+```
+
+## cli
+
+```
+npm i
 ```
 
 ## config
@@ -76,11 +82,11 @@ config for cache
 ```
 git clone https://github.com/postor/ssr-proxy-puppeteer
 cd ssr-proxy-puppeteer/example
-yarn
-yarn start server
+npm i
+npm run vue
 
 # another shell
-yarn start proxy
+npm run proxy
 
 # open http://localhost:3000
 ```
