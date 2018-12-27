@@ -12,12 +12,7 @@ module.exports = {
       return Object.keys(proxyRes.headers).some(x => proxyRes.headers[x].includes('application/json'))
     },
     bodyModifier: function (body, origin, req, res, proxyRes) {
-      const newBody = body.split(`${origin}/`).join('/')
-      if(req.url==='/api'){
-        console.log(body,body.split(`${origin}/`),newBody)
-      }
-      
-      return newBody
+      return body.split(`${origin}/`).join('/')      
     },
   },
   cache: {

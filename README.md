@@ -6,16 +6,20 @@ Make SEO easy for legacy SPA
 
 response with `Content-Type` contain `text/html` will get rendered, others just proxied
 
-```
-npm i ssr-proxy-puppeteer -g
-
-ssr-proxy-puppeteer
-```
-
-## cli
+install
 
 ```
-npm i
+npm i ssr-proxy-puppeteer
+# when it fails try this, refer https://github.com/GoogleChrome/puppeteer/issues/375
+npm i ssr-proxy-puppeteer -g --unsafe-perm=true
+```
+
+use
+
+```
+ssr-proxy-puppeteer --origion=http://localhost:3001
+# or more detailed config
+ssr-proxy-puppeteer --config=config.js
 ```
 
 ## config
@@ -31,51 +35,46 @@ simple config
 more detail config version
 
 ```
-{
-  "ssr": {
-    "origin": "http://jilupian.youku.com",
-    "timeout": 10000,
-    "ttl": 86400,
-    "waitUntil": "networkidle2",
-    "urls": [
-      {
-        "url": "/some/path1",
-        "timeout": 20000
-      },
-      {
-        "regex": "^/uptodate/\\d+",
-        "cache": false
-      }
-    ]
+module.exports = {
+  // config for ssr
+  ssr: {
+    origin: "http://localhost:3001", // string, the source to proxy from
+    port: 3002, // port for proxy server
+    timeout: 10000, // in miliseconds, time to wait for puppeteer ssr
+    ttl: 86400, //cache
+    extensions: [ // url path with these extensions will got ssr
+      "php",
+      "jsp"
+    ],
+    // you may need to modify body and change the source path
+    bodyNeedModify: function (origin, req, res, proxyRes) {
+      // for example all json ajax need to modify
+      return Object.keys(proxyRes.headers).some(x => proxyRes.headers[x].includes('application/json'))
+    },
+    // how are the modified
+    bodyModifier: function (body, origin, req, res, proxyRes) {
+      // search the origion and replace them with '/'
+      return body.split(`${origin}/`).join('/')      
+    },
   },
-  "cache": {
-    "store": "cache-manager-redis",
-    "db": 0
+  // config for cache refer https://github.com/GoogleChrome/puppeteer/blob/master/docs/api.md#pagegotourl-options
+  cache: {
+    //`cache-manager-redis` and `cache-manager-memcached-store` already installed 
+    // and can be used as `store` option, by default `store` uses `memory`
+    store: "cache-manager-redis",
+
+    // other options for your store type
+    // refer https://github.com/dial-once/node-cache-manager-redis or https://github.com/theogravity/node-cache-manager-memcached-store
+    db: 2
   },
-  "puppeteer": {
-    "executablePath": "D:\\programs\\chrome-win\\chrome.exe",
-    "headless": true
+  // launch config for puppeteer
+  // refer https://github.com/GoogleChrome/puppeteer/blob/master/docs/api.md#puppeteerlaunchoptions
+  puppeteer: {
+    executablePath: "D:\\programs\\chrome-win\\chrome.exe",
+    headless: false
   }
 }
 ```
-
-config for ssr
-
- - `origin` string, the source to proxy from
- - `timeout` number, in miliseconds, time to wait for puppeteer
- - `waitUntil` string, wait for puppeteer to navigate, refer https://github.com/GoogleChrome/puppeteer/blob/master/docs/api.md#pagegotourl-options
- - `cache` boolean, use cache or not
- - `ttl` number, in seconds, only used when cache, time to live
- - `urls` array, to custom config for different urls, `url` to match certain url, `regex` to match regular expression, `timeout`, `waitUntil`, `cache`, `ttl` can be different for each url
-
-config for puppeteer 
- 
- - the launch option for puppeteer, refer https://github.com/GoogleChrome/puppeteer/blob/master/docs/api.md#puppeteerlaunchoptions
-
-config for cache
-
- - use `node-cache-manager` for cache refer https://github.com/BryanDonovan/node-cache-manager
- - `cache-manager-redis` and `cache-manager-memcached-store` already installed and can be used as `store` option, by default `store` uses `memory`, other options refer https://github.com/dial-once/node-cache-manager-redis and https://github.com/theogravity/node-cache-manager-memcached-store
 
 ## try it out
 
@@ -86,7 +85,8 @@ npm i
 npm run vue
 
 # another shell
-npm run proxy
+npm i ssr-proxy-puppeteer -g --unsafe-perm=true
+ssr-proxy-puppeteer --origion=http://localhost:3001
 
 # open http://localhost:3000
 ```
