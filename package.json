@@ -1,5 +1,5 @@
 {
-  "name": "@postor/ssr-proxy-puppeteer",
+  "name": "ssr-proxy-puppeteer",
   "version": "1.0.2",
   "description": "Make SEO easy for legacy SPA",
   "main": "index.js",
