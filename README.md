@@ -90,3 +90,10 @@ ssr-proxy-puppeteer --origion=http://localhost:3001
 
 # open http://localhost:3000
 ```
+
+## docker
+
+```
+docker pull postor/ssr-proxy-puppeteer
+docker run -p 3003:3000 -it --rm postor/ssr-proxy-puppeteer:1.0.3 ssr-proxy-puppeteer --origin=http://192.168.1.10:3001
+```
