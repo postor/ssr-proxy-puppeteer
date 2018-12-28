@@ -8,8 +8,10 @@ libxcursor1 libxdamage1 libxext6 libxfixes3 libxi6 libxrandr2 libxrender1 libxss
 ca-certificates fonts-liberation libappindicator1 libnss3 lsb-release xdg-utils \
 && useradd ssr
 
-RUN npm i ssr-proxy-puppeteer@1.0.3 -g --unsafe-perm=true
+ADD ./ /ssr
+WORKDIR /ssr
+ENV IN_DOCKER=true
 
-USER ssr
+RUN npm i --unsafe-perm=true && npm i ./ -g --unsafe-perm
 
-ENTRYPOINT [ "ssr-proxy-puppeteer" ]
+CMD ssr-proxy-puppeteer

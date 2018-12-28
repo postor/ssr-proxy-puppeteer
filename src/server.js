@@ -25,7 +25,7 @@ config.ssr = {
 
 if (process.env.IN_DOCKER) {
   const { puppeteer = {} } = config
-  const { args = [] } = puppeteer
+  const { args = [] } = puppeteer;
   ['--no-sandbox', '--disable-setuid-sandbox'].forEach(x=>(!args.includes(x)) && args.push(x))
   puppeteer.args = args
   config.puppeteer = puppeteer
