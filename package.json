@@ -1,6 +1,6 @@
 {
   "name": "ssr-proxy-puppeteer",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Make SEO easy for legacy SPA",
   "main": "index.js",
   "scripts": {
