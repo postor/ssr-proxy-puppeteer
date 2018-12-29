@@ -1,26 +1,36 @@
 # ssr-proxy-puppeteer
 
-Make SEO easy for legacy SPA
+Make SEO easy for legacy SPA | 让单页应用SEO更简单
 
-## usage
+## usage | 使用
 
-response with `Content-Type` contain `text/html` will get rendered, others just proxied
 
-install
+install | 安装
 
 ```
 npm i ssr-proxy-puppeteer
-# when it fails try this, refer https://github.com/GoogleChrome/puppeteer/issues/375
+# when it fails try this, refer https://github.com/GoogleChrome/puppeteer/issues/375 | 如果安装失败，使用下面命令，原因参考左侧连接
 npm i ssr-proxy-puppeteer -g --unsafe-perm=true
 ```
 
-use
+use | 使用
 
 ```
 ssr-proxy-puppeteer --origion=http://localhost:3001
-# or more detailed config
+# or more detailed config | 或者更详细的配置
 ssr-proxy-puppeteer --config=config.js
 ```
+
+## default rules | 默认规则
+
+- only GET request may get server side rendered | 只有GET请求才有可能被服务端渲染
+- response with `Content-Type` contain `text/html` will get server side rendered | GET请求的response `Content-Type` 包含 `text/html`的会被服务端渲染
+- response without `Content-Type` and 
+
+- ssr by puppeteer 
+
+- GET request with `Content-Type` not contain `text/html` 
+
 
 ## config
 
