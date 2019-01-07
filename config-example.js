@@ -1,6 +1,6 @@
 module.exports = {
   ssr: {
-    origin: "http://localhost:3001",
+    origin: "http://localhost:8080/#",
     port: 3002,
     timeout: 10000,
     ttl: 86400,

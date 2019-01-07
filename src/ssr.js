@@ -1,6 +1,9 @@
 module.exports = async (browser, url, config = {}) => {
   const { timeout = 5000, waitUntil = 'networkidle2' } = config
   const page = await browser.newPage()
+  await page.evaluateOnNewDocument(function(){
+    window.SSR_PROXY_PUPPETEER = true
+  });
   try {
     await page.goto(url, { timeout, waitUntil });
   } catch (e) {

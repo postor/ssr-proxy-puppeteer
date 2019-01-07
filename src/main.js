@@ -74,7 +74,7 @@ module.exports = async (config) => {
       proxyRes.pipe(res)
       return
     }
-    res.writeHead(proxyRes.statusCode, newHeaders(proxyRes.headers))
+    res.writeHead(200, newHeaders(proxyRes.headers))
     const cachedHtml = await cacheStore.get(req.url)
     if (cachedHtml) {
       console.log(`write cached ${req.url}`)
