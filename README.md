@@ -16,7 +16,7 @@ npm i ssr-proxy-puppeteer -g --unsafe-perm=true
 use | 使用
 
 ```
-ssr-proxy-puppeteer --origion=http://localhost:3001
+ssr-proxy-puppeteer --origin=http://localhost:3001
 # or more detailed config | 或者更详细的配置
 ssr-proxy-puppeteer --config=config.js
 ```
