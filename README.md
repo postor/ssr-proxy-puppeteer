@@ -8,7 +8,7 @@ Make SEO easy for legacy SPA | 让单页应用SEO更简单
 install | 安装
 
 ```
-npm i ssr-proxy-puppeteer
+npm i ssr-proxy-puppeteer -g
 # when it fails try this, refer https://github.com/GoogleChrome/puppeteer/issues/375 | 如果安装失败，使用下面命令，原因参考左侧连接
 npm i ssr-proxy-puppeteer -g --unsafe-perm=true
 ```
