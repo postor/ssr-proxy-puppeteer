@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/node
 
 const http = require('http'),
   puppeteer = require('puppeteer'),
