@@ -25,6 +25,7 @@ examples | 例子
 
 - [vue](./examples/vue)
 - [angular](./examples/angular)
+- [react](./examples/react)
 
 ## config | 配置
 
