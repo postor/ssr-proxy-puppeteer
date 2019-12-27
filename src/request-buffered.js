@@ -9,16 +9,23 @@ module.exports = getResponse
  */
 function getResponse(req, uri) {
   return new Promise((resolve, reject) => {
+    let headers = {
+      ...req.headers
+    }
+
+    delete headers['if-none-match']
+    delete headers['host']
     request({
       uri,
       method: req.method,
-      headers: req.headers,
+      headers,
+      gzip: true,
     }, (err, res, body) => {
       if (err) {
         reject(err)
         return
       }
-      resolve(body)
+      resolve({ body, res })
     })
   })
 

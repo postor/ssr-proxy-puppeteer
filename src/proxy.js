@@ -8,8 +8,7 @@ const proxy = httpProxy.createProxyServer({
 })
 
 proxy.on('proxyRes', async function (proxyRes, req, res) {
-  res.writeHead(proxyRes.statusCode, newHeaders(proxyRes.headers))
-  let data = []
+  let data = [], statusCode = proxyRes.statusCode, headers = newHeaders(proxyRes.headers)
   proxyRes.on('data', function (chunk) {
     data.push(chunk)
   })
@@ -18,7 +17,10 @@ proxy.on('proxyRes', async function (proxyRes, req, res) {
     let body = buffer.toString('utf-8')
     if (!body) {
       // response is buffer, bug of http-proxy, use requestjs instead
-      body = await getBufferedResponse(req, origin + ssrPrefix + req.url)
+      let result = await getBufferedResponse(req, origin + req.url)
+      body = result.body
+      statusCode = result.res.statusCode
+      headers = newHeaders(result.res.headers)
     }
 
     if (needBodyModify(body, origin, req, res, proxyRes)) {
@@ -27,6 +29,7 @@ proxy.on('proxyRes', async function (proxyRes, req, res) {
     }
 
     //console.log(body.substring(0, 10))
+    res.writeHead(statusCode, headers)
     res.write(body)
     res.end()
   })
@@ -35,8 +38,12 @@ proxy.on('proxyRes', async function (proxyRes, req, res) {
 module.exports = proxy
 
 function newHeaders(headers) {
-  const newHeader = { ...headers }
+  const newHeader = {
+    ...headers
+  }
   delete newHeader['content-encoding']
+  delete newHeader['accept-ranges']
+  delete newHeader['transfer-encoding']
   delete newHeader['content-length']
   return newHeader
 }

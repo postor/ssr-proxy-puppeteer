@@ -36,7 +36,9 @@ module.exports = {
     },
     bodyModifier: function (body, origin, req, res, proxyRes) {
       // console.log('before:'+body)
-      const result = body.split(`${origin}/#/`).join('/').replace(/useHash\s*:\s*true/g, 'useHash: false')
+      const result = body
+        .split(`${origin}/#/`).join('/') // rewrite url
+        .replace(/useHash\s*:\s*true/g, 'useHash: false') // for angular/react
       // console.log('after:'+result)
       return result
     },

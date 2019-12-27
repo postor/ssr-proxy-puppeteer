@@ -1,8 +1,8 @@
-# angular example | angular 示例
+# vue example | vue 示例
 
 ## usage | 用法
 
-one shell, start the old service (`ng serve` on localhost:4200) | 开启一个 shell，启动旧的服务
+one shell, start the old service (react-scripts on localhost:8080) | 开启一个 shell，启动旧的服务
 
 ```
 yarn start
@@ -20,16 +20,11 @@ then open http://localhost:3000 | 然后打开浏览器体验
 
 ```
 ...
-@NgModule({
-  imports: [RouterModule.forRoot(routes, {
-    useHash: true
-  })],
-  ...
-})
+const config = { useHash: true }
 ...
 ```
 
-inside [src/app/app-routing.module.ts](./src/app/app-routing.module.ts) work together with config [../../src/default-config.js](../../src/default-config.js)
+inside [src/App.js](./src/App.js) work together with config [../../src/default-config.js](../../src/default-config.js)
 
 ```
     ...
