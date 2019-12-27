@@ -75,46 +75,9 @@ module.exports = {
 ```
 for default config refer: [src/default-config.js](./src/default-config.js)
 
-## try it out | 自己试一试
-
-
-`vue-router` history mode is much easier, just use `ssr-proxy-puppeteer --origion=http://localhost:8080`, and then open `http://localhost:3000` | `vue-router` history模式可以直接使用 `ssr-proxy-puppeteer --origion=http://localhost:8080` 然后访问`http://localhost:3000`
-
-based on view router hash mode | 基于哈希模式的vue router
-
-```
-git clone https://github.com/postor/ssr-proxy-puppeteer
-cd ssr-proxy-puppeteer/example
-npm i http-server -g
-http-server
-
-# another shell, dir ssr-proxy-puppeteer/example
-npm i ssr-proxy-puppeteer -g --unsafe-perm=true
-ssr-proxy-puppeteer --config=ssr-config.js
-
-# open http://localhost:3000
-```
-
-- notice 1: example/ssr-config.js line 3, origin config with `/#`
-
-```
-ssr: {
-    origin: "http://localhost:8080/#"
-}
-```
-
-- notice 2: example/app.js line 24, hash mode in puppeteer and history in client browser
-
-```
-const router = new VueRouter({
-  routes, // short for `routes: routes`
-  mode: window.SSR_PROXY_PUPPETEER ? 'hash' : 'history'
-})
-```
-
 ## docker
 
 ```
 docker pull postor/ssr-proxy-puppeteer
-docker run -p 3003:3000 -it --rm postor/ssr-proxy-puppeteer:1.0.3 ssr-proxy-puppeteer --origin=http://192.168.1.10:8080
+docker run -p 3003:3000 -it --rm postor/ssr-proxy-puppeteer ssr-proxy-puppeteer --origin=http://192.168.1.10:8080
 ```
