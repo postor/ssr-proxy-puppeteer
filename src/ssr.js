@@ -1,4 +1,5 @@
 module.exports = async (browser, url, config = {}) => {
+  console.log({url})
   const { timeout = 5000, waitUntil = 'networkidle2' } = config
   const page = await browser.newPage()
   await page.evaluateOnNewDocument(function(){

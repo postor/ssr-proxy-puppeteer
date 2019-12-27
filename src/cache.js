@@ -1,10 +1,11 @@
-var cacheManager = require('cache-manager'),
-  path = require('path'),
-  fs = require('fs')
+const cacheManager = require('cache-manager'),
+  config = require('./config').cache
 
-module.exports = (config = {
-  store: 'memory'
-}) => {
+
+module.exports = getInstance()
+
+
+function getInstance() {
   const {
     store,
     ...rest
@@ -20,5 +21,3 @@ module.exports = (config = {
   })
   return instance
 }
-
-

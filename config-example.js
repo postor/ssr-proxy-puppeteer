@@ -4,6 +4,9 @@ module.exports = {
     port: 3002,
     timeout: 10000,
     ttl: 86400,
+    ssrPrefix:'/#',
+    whiteRegexList:[],
+    blackRegexList:[],
     extensions: [
       "php",
       "jsp"
