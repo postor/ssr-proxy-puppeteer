@@ -20,19 +20,11 @@ ssr-proxy-puppeteer --origin=http://localhost:3001
 # or more detailed config | 或者更详细的配置 
 ssr-proxy-puppeteer --config=config.js
 ```
-default config: [src/default-config.js](./src/default-config.js)
 
 examples | 例子
 
 - [vue](./examples/vue)
 - [angular](./examples/angular)
-
-## default rules | 默认规则
-
-- only GET request may get server side rendered | 只有GET请求才有可能被服务端渲染
-- response with `Content-Type` contain `text/html` will get server side rendered | GET请求的response `Content-Type` 包含 `text/html`的会被服务端渲染
-- response without `Content-Type` and in config `ssr.extensions` will get server side rendered | 包含配置了的后缀的url会被服务端渲染
-- response without `Content-Type` and not in config `ssr.extensions` depends on MIME of `url` | 没配置的由`url`后缀MIME决定
 
 ## config | 配置
 
@@ -50,23 +42,20 @@ more detail config version | 复杂版
 module.exports = {
   // config for ssr
   ssr: {
-    origin: "http://localhost:3001", // string, the source to proxy from | 源网站
+    origin: "http://localhost:8080", // string, the source to proxy from | 源网站
     port: 3002, // port for this server | 此应用服务端口
     timeout: 10000, // in miliseconds, time to wait for puppeteer ssr | 等待puppeteer服务端渲染的时间（毫秒）
     ttl: 86400, //cache, inseconds| 缓存时间，秒
-    extensions: [ // url path with these extensions will got ssr | 配置服务端渲染的扩展名
-      "php",
-      "jsp"
-    ],
-    // you may need to modify body and change the source path | 判断哪些请求需要额外修改body的
+    
+    // if need modify (like js contain original host urls) | 判断哪些请求需要额外修改body的
     bodyNeedModify: function (origin, req, res, proxyRes) {
-      // for example all json ajax need to modify
-      return Object.keys(proxyRes.headers).some(x => proxyRes.headers[x].includes('application/json'))
+      ...
+      // return boolean
     },
-    // how the body modified | body 如何修改
+    // how the body modified (rewrite urls) | body 如何修改 
     bodyModifier: function (body, origin, req, res, proxyRes) {
-      // search the origion and replace them with '/'
-      return body.split(`${origin}/`).join('/')      
+      ...
+      // return string
     },
   },
   // config for cache refer https://github.com/GoogleChrome/puppeteer/blob/master/docs/api.md#pagegotourl-options | 缓存配置
@@ -81,12 +70,10 @@ module.exports = {
   },
   // launch config for puppeteer | puppeteer启动选项配置
   // refer https://github.com/GoogleChrome/puppeteer/blob/master/docs/api.md#puppeteerlaunchoptions
-  puppeteer: {
-    executablePath: "D:\\programs\\chrome-win\\chrome.exe",
-    headless: false
-  }
+  puppeteer: {}
 }
 ```
+for default config refer: [src/default-config.js](./src/default-config.js)
 
 ## try it out | 自己试一试
 
