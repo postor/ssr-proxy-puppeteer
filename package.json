@@ -1,6 +1,6 @@
 {
   "name": "ssr-proxy-puppeteer",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Make SEO easy for legacy SPA | 让单页应用SEO更简单",
   "main": "index.js",
   "scripts": {
