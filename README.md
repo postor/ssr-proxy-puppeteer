@@ -17,9 +17,15 @@ use | 使用
 
 ```
 ssr-proxy-puppeteer --origin=http://localhost:3001
-# or more detailed config | 或者更详细的配置
+# or more detailed config | 或者更详细的配置 
 ssr-proxy-puppeteer --config=config.js
 ```
+default config: [src/default-config.js](./src/default-config.js)
+
+examples | 例子
+
+- [vue](./examples/vue)
+- [angular](./examples/angular)
 
 ## default rules | 默认规则
 

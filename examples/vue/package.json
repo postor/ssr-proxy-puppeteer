@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "start": "http-server",
-    "proxy": "node_modules/.bin/ssr-proxy-puppeteer --origin=http://localhost:8080",
+    "proxy": "ssr-proxy-puppeteer --origin=http://localhost:8080",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -13,6 +13,6 @@
   "license": "ISC",
   "dependencies": {
     "http-server": "^0.12.0",
-    "ssr-proxy-puppeteer": "^1.0.7"
+    "ssr-proxy-puppeteer": "1.0.8"
   }
 }
