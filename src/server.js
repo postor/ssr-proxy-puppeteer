@@ -1,5 +1,6 @@
+#!/bin/bash
+
 const http = require('http'),
-  httpProxy = require('http-proxy'),
   puppeteer = require('puppeteer'),
   argv = require('yargs').argv,
   calcUrlConfig = require('./url-config'),

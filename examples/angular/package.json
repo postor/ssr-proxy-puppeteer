@@ -7,7 +7,8 @@
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "proxy": "ssr-proxy-puppeteer --origin=http://localhost:4200"
   },
   "private": true,
   "dependencies": {
