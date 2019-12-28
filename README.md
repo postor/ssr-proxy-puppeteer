@@ -2,6 +2,8 @@
 
 Make SEO easy for legacy SPA | 让单页应用SEO更简单
 
+quick glance: https://www.youtube.com/watch?v=8hM8gV01ROg&list=PLM1v95K5B1ntVsYvNJIxgRPppngrO_X4s
+
 ## usage | 使用
 
 
